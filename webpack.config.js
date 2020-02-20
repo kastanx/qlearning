@@ -1,4 +1,4 @@
-const path = require('./qlearning/node_modules/path');
+const path = require('path');
 
 module.exports = {
   entry: './src/app.ts',
