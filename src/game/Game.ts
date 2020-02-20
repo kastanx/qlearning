@@ -106,4 +106,29 @@ export class Game {
 
     this.update();
   };
+
+  controls = (e: any) => {
+    e = e || window.event;
+
+    if (e.keyCode == '38') {
+      // up arrow
+      this.move('top');
+    } else if (e.keyCode == '40') {
+      // down arrow
+      this.move('down');
+    } else if (e.keyCode == '37') {
+      // left arrow
+      this.move('left');
+    } else if (e.keyCode == '39') {
+      // right arrow
+      this.move('right');
+    } else if (e.key == 'w') {
+      // right arrow
+      this.start();
+    }
+  };
+
+  createControls = (document: any) => {
+    document.onkeydown = this.controls;
+  };
 }

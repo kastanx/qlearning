@@ -7,10 +7,19 @@ export class Agent {
   public qtable: Qtable;
   private gamma: number = 0.8;
   private alpha: number = 0.1;
+  public frameBuffer: FrameBuffer;
+
+  private nextAction: number;
 
   constructor() {
     this.qtable = new Qtable();
+    this.frameBuffer = new FrameBuffer();
   }
+
+  setNextAction = (state: string) => {
+    this.nextAction = this.getAction(state);
+    this.frameBuffer.add(state, this.nextAction);
+  };
 
   getAction = (state: string) => {
     const takeRandomDecision = Math.ceil(Math.random() * 100000) % 90001;
@@ -44,8 +53,8 @@ export class Agent {
     }
   };
 
-  executeAction = (action: number, document: any) => {
-    switch (action) {
+  executeAction = (document: any) => {
+    switch (this.nextAction) {
       case Action.UP:
         // @ts-ignore
         document.dispatchEvent(new KeyboardEvent('keydown', { keyCode: '38' }));
@@ -65,16 +74,16 @@ export class Agent {
     }
   };
 
-  reward = (frameBuffer: FrameBuffer) => {
-    for (let i = frameBuffer.buffer.length - 1; i >= 0; --i) {
-      const middleIndex = (frameBuffer.buffer.length - 1) / 2;
+  reward = () => {
+    for (let i = this.frameBuffer.buffer.length - 1; i >= 0; --i) {
+      const middleIndex = (this.frameBuffer.buffer.length - 1) / 2;
 
-      const state = frameBuffer.buffer[i].state;
+      const state = this.frameBuffer.buffer[i].state;
       const arrayState = state.split(',');
 
       let reward: number;
-      if (frameBuffer.buffer[i - 1]) {
-        const previousFrame = frameBuffer.buffer[i - 1];
+      if (this.frameBuffer.buffer[i - 1]) {
+        const previousFrame = this.frameBuffer.buffer[i - 1];
         if (parseInt(arrayState[middleIndex]) === EntityType.OBSTACLE) {
           reward = -5;
           //this.qtable.setQ(previousFrame.state, previousFrame.action, -5);
@@ -102,5 +111,7 @@ export class Agent {
         }
       }
     }
+
+    this.frameBuffer.clear();
   };
 }

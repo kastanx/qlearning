@@ -18,4 +18,8 @@ export class Qtable {
 
     this.table[config] += reward;
   };
+
+  ruleCount = () => {
+    return Object.keys(this.table).length;
+  };
 }
